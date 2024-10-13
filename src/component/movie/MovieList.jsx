@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/scss";
 import MovieCard from "./MovieCard";
 import useSWR from "swr";
 import { fetcher } from "../../config";
@@ -12,10 +11,7 @@ const MovieList = ({ type = "now_playing" }) => {
     fetcher
   );
 
-  const [movies, setMovies] = useState([]);
-  useEffect(() => {
-    if (data && data.results) setMovies(data.results);
-  }, [data]);
+  const movies = data?.results || [];
 
   return (
     <div className="movie-list">
