@@ -2,6 +2,8 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import useSWR from "swr";
 import { apiKey, fetcher } from "../config";
+import { Swiper, SwiperSlide } from "swiper/react";
+import MovieCard from "../component/movie/MovieCard";
 
 const MovieDetailsPage = () => {
   const { movieId } = useParams();
@@ -51,6 +53,7 @@ const MovieDetailsPage = () => {
       </p>
       <MovieCredits></MovieCredits>
       <MovieVideos></MovieVideos>
+      <MovieSimilar></MovieSimilar>
     </div>
   );
 };
@@ -76,7 +79,7 @@ function MovieCredits() {
               className="w-full h-[350px] object-cover rounded-lg mb-3"
               alt=""
             />
-            <h3 className="text-xs font-medium">{item.name}</h3>
+            <h3 className="text-lg font-medium">{item.name}</h3>
           </div>
         ))}
       </div>
@@ -91,10 +94,60 @@ function MovieVideos() {
     fetcher
   );
   if (!data) return null;
-  console.log("TCL: MovieVideos -> data", data);
+  const { results } = data;
+  if (!results || results.length <= 0) return null;
 
-  return <div></div>;
+  return (
+    <div className="py-10">
+      <div className="flex flex-col gap-10">
+        {results.slice(0, 1).map((item) => (
+          <div key={item.id}>
+            <h3 className="inline-block p-3 mb-5 text-xl font-medium bg-secondary">
+              {item.name}
+            </h3>
+            <div key={item.id} className="w-full aspect-video">
+              <iframe
+                width="853"
+                height="480"
+                src={`https://www.youtube.com/embed/${item.key}`}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerPolicy="strict-origin-when-cross-origin"
+                allowfullscreen
+                className="object-fill w-full h-full"
+              ></iframe>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
-// <iframe width="853" height="480" src="https://www.youtube.com/embed/k6Ju4YjSoiQ" title="TÔI ĐỌC SÁCH CỦA TUN PHẠM ĐỂ BẠN KHỎI PHẢI ĐỌC" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+//
+function MovieSimilar() {
+  const { movieId } = useParams();
+  const { data, error } = useSWR(
+    `https://api.themoviedb.org/3/movie/${movieId}/similar?api_key=${apiKey}`,
+    fetcher
+  );
+  if (!data) return null;
+  const { results } = data;
+  if (!results || results.length <= 0) return null;
+  return (
+    <div className="py-10">
+      <h2 className="mb-10 text-3xl font-medium">Similar movies</h2>
+      <div className="movie-list">
+        <Swiper grabCursor={"true"} spaceBetween={40} slidesPerView={"auto"}>
+          {results.length > 0 &&
+            results.map((item) => (
+              <SwiperSlide key={item.id}>
+                <MovieCard item={item}></MovieCard>
+              </SwiperSlide>
+            ))}
+        </Swiper>
+      </div>
+    </div>
+  );
+}
 
 export default MovieDetailsPage;
