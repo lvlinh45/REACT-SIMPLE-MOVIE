@@ -17,7 +17,8 @@ const MoviePage = () => {
     setFilter(e.target.value);
   };
 
-  const { data } = useSWR(url, fetcher);
+  const { data, isLoading } = useSWR(url, fetcher);
+  console.log("TCL: isLoading", isLoading);
 
   useEffect(() => {
     if (filterDebounce) {
@@ -59,9 +60,51 @@ const MoviePage = () => {
           </svg>
         </button>
       </div>
+      {isLoading && (
+        <div className="w-10 h-10 mx-auto border-4 border-t-4 rounded-full border-primary border-t-transparent animate-spin "></div>
+      )}
       <div className="grid grid-cols-4 gap-10">
-        {movies.length > 0 &&
+        {!isLoading &&
+          movies.length > 0 &&
           movies.map((item) => <MovieCard key={item.id} item={item} />)}
+      </div>
+
+      <div className="flex items-center justify-center mt-10 gap-x-5">
+        <span className="cursor-pointer">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth="1.5"
+            stroke="currentColor"
+            className="size-6"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M15.75 19.5 8.25 12l7.5-7.5"
+            />
+          </svg>
+        </span>
+        <span className="inline-block px-4 py-2 leading-none bg-white rounded cursor-pointer text-slate-900">
+          1
+        </span>
+        <span className="cursor-pointer">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth="1.5"
+            stroke="currentColor"
+            className="size-6"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="m8.25 4.5 7.5 7.5-7.5 7.5"
+            />
+          </svg>
+        </span>
       </div>
     </div>
   );
