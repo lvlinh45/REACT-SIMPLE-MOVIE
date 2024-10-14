@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import useSWR from "swr";
 import { fetcher } from "../../config";
 import { Swiper, SwiperSlide } from "swiper/react";
+import Button from "../button/Button";
+import { useNavigate } from "react-router-dom";
 
 const Banner = () => {
   const { data } = useSWR(
@@ -14,7 +16,7 @@ const Banner = () => {
 
   return (
     <section className="h-[500px] mb-20 overflow-hidden banner page-container">
-      <Swiper grabCursor="true" slidesPerView={"auto"}>
+      <Swiper grabCursor="true" slidesPerView={"auto"} autoplay="true">
         {movies.length > 0 &&
           movies.map((item) => (
             <SwiperSlide key={item.id}>
@@ -27,7 +29,8 @@ const Banner = () => {
 };
 
 function BannerItem({ item }) {
-  const { title, poster_path } = item;
+  const { title, poster_path, id } = item;
+  const navigate = useNavigate();
   return (
     <div className="relative w-full h-full rounded-lg">
       <div className="overlay absolute inset-0 bg-gradient-to-t from-[rgba(0,0,0,0.5)] to-[rgba(0,0,0,0.5)] rounded-lg"></div>
@@ -49,9 +52,9 @@ function BannerItem({ item }) {
             Drama
           </span>
         </div>
-        <button className="px-6 py-3 font-medium text-white rounded-lg bg-primary">
-          Watch Now
-        </button>
+        <Button bgColor={"secondary"} onClick={() => navigate(`/movies/${id}`)}>
+          Watch now
+        </Button>
       </div>
     </div>
   );
