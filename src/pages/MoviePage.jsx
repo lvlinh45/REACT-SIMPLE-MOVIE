@@ -38,7 +38,6 @@ const MoviePage = () => {
     const newOffset = (event.selected * itemsPerPage) % data.total_results;
     setItemOffset(newOffset);
     setNextPage(event.selected + 1);
-    console.log("TCL: handlePageClick -> selected", event.selected + 1);
   };
 
   return (
