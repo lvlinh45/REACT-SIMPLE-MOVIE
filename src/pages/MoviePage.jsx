@@ -3,13 +3,15 @@ import { fetcher } from "../config";
 import useSWR from "swr";
 import MovieCard from "../component/movie/MovieCard";
 import useDebounce from "../hooks/useDebounce";
-
+import ReactPaginate from "react-paginate";
 // https://api.themoviedb.org/3/search/movie
 
+const itemsPerPage = 20;
 const MoviePage = () => {
+  const [nextPage, setNextPage] = useState(1);
   const [filter, setFilter] = useState("");
   const [url, setUrl] = useState(
-    "https://api.themoviedb.org/3/movie/popular?api_key=49f5e2c77c7ca2dce553af90f77b63dd"
+    `https://api.themoviedb.org/3/movie/popular?api_key=49f5e2c77c7ca2dce553af90f77b63dd&page=${nextPage}`
   );
   const filterDebounce = useDebounce(filter, 500);
 
@@ -17,21 +19,36 @@ const MoviePage = () => {
     setFilter(e.target.value);
   };
 
-  const { data, isLoading } = useSWR(url, fetcher);
-  console.log("TCL: isLoading", isLoading);
+  // console.log("TCL: isLoading", isLoading);
 
+  const { data, isLoading } = useSWR(url, fetcher);
   useEffect(() => {
     if (filterDebounce) {
       setUrl(
-        `https://api.themoviedb.org/3/search/movie?api_key=49f5e2c77c7ca2dce553af90f77b63dd&query=${filterDebounce}`
+        `https://api.themoviedb.org/3/search/movie?api_key=49f5e2c77c7ca2dce553af90f77b63dd&query=${filterDebounce}&page=${nextPage}`
       );
     } else {
       setUrl(
-        "https://api.themoviedb.org/3/movie/popular?api_key=49f5e2c77c7ca2dce553af90f77b63dd"
+        `https://api.themoviedb.org/3/movie/popular?api_key=49f5e2c77c7ca2dce553af90f77b63dd&page=${nextPage}`
       );
     }
-  }, [filterDebounce]);
+  }, [filterDebounce, nextPage]);
   const movies = data?.results || [];
+  console.log("TCL: data", data);
+
+  // Paginate
+  const [itemOffset, setItemOffset] = useState(0);
+
+  if (!data || !data?.total_results) return null;
+  const pageCount = Math.ceil(data.total_results / itemsPerPage);
+
+  const handlePageClick = (event) => {
+    const newOffset = (event.selected * itemsPerPage) % data.total_results;
+    setItemOffset(newOffset);
+    setNextPage(event.selected + 1);
+    console.log("TCL: handlePageClick -> selected", event.selected + 1);
+  };
+
   return (
     <div className="py-10 page-container">
       <div className="flex mb-10">
@@ -69,42 +86,17 @@ const MoviePage = () => {
           movies.map((item) => <MovieCard key={item.id} item={item} />)}
       </div>
 
-      <div className="flex items-center justify-center mt-10 gap-x-5">
-        <span className="cursor-pointer">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth="1.5"
-            stroke="currentColor"
-            className="size-6"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M15.75 19.5 8.25 12l7.5-7.5"
-            />
-          </svg>
-        </span>
-        <span className="inline-block px-4 py-2 leading-none bg-white rounded cursor-pointer text-slate-900">
-          1
-        </span>
-        <span className="cursor-pointer">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth="1.5"
-            stroke="currentColor"
-            className="size-6"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="m8.25 4.5 7.5 7.5-7.5 7.5"
-            />
-          </svg>
-        </span>
+      <div className="mt-10">
+        <ReactPaginate
+          className="pagination"
+          breakLabel="..."
+          nextLabel="next >"
+          onPageChange={handlePageClick}
+          pageRangeDisplayed={5}
+          pageCount={pageCount}
+          previousLabel="< previous"
+          renderOnZeroPageCount={null}
+        />
       </div>
     </div>
   );
