@@ -4,7 +4,7 @@ import "swiper/scss";
 import Main from "./component/layout/Main";
 import Banner from "./component/banner/Banner";
 import MoviePageLoadMore from "./pages/MoviePageLoadMore";
-import NotFound from "./component/notFound/NotFound";
+// import NotFound from "./pages/NotFound";
 // import HomePage from "./pages/HomePage";
 // import MoviePage from "./pages/MoviePage";
 // import MovieDetailsPage from "./pages/MovieDetailsPage";
@@ -13,6 +13,7 @@ import NotFound from "./component/notFound/NotFound";
 const HomePage = lazy(() => import("./pages/HomePage"));
 const MoviePage = lazy(() => import("./pages/MoviePage"));
 const MovieDetailsPage = lazy(() => import("./pages/MovieDetailsPage"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 
 function App() {
   return (
