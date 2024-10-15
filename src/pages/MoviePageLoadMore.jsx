@@ -97,6 +97,7 @@ const MoviePageLoadMore = () => {
       </div>
       <div className="mt-10 text-center">
         <Button
+          bgColor="secondary"
           disabled={isReachingEnd}
           onClick={() => setSize(size + 1)}
           className={`${isReachingEnd ? "bg-slate-300" : ""}`}

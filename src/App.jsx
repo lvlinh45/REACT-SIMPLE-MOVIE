@@ -4,6 +4,7 @@ import "swiper/scss";
 import Main from "./component/layout/Main";
 import Banner from "./component/banner/Banner";
 import MoviePageLoadMore from "./pages/MoviePageLoadMore";
+import NotFound from "./component/notFound/NotFound";
 // import HomePage from "./pages/HomePage";
 // import MoviePage from "./pages/MoviePage";
 // import MovieDetailsPage from "./pages/MovieDetailsPage";
@@ -28,14 +29,12 @@ function App() {
                 </>
               }
             ></Route>
-            <Route
-              path="/movies"
-              element={<MoviePageLoadMore></MoviePageLoadMore>}
-            ></Route>
+            <Route path="/movies" element={<MoviePage></MoviePage>}></Route>
             <Route
               path="/movies/:movieId"
               element={<MovieDetailsPage></MovieDetailsPage>}
             ></Route>
+            <Route path="*" element={<NotFound></NotFound>}></Route>
           </Route>
         </Routes>
       </Fragment>
